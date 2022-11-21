@@ -18,4 +18,4 @@ Docker is a software platform that allows you to build, test, and deploy applica
 - Docker allows you to ship code faster, standardize application operations, seamlessly move code, and save money by improving resource utilization.
 - With Docker, you get a single that can reliably run anywhere.
 - Docker's simple and straightforward syntax gives you full control.
-- Wide adoption means there's a robust ecosystem of tools and off-the-shelf applications that are ready to use with Docker
+- Wide adoption means there's a robust ecosystem of tools and off-the-shelf applications that are ready to use with Docker.
