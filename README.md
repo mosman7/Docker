@@ -49,9 +49,52 @@ Docker containers have the following lifecycle:
 ## Create website task
 1. In vscode create a file `index.html`
 2. Then i pulled the latest docker image `docker pull nginx`
-3. Then i started the image `docker run -dp 80:80 nginx`
+3. Then i started the image `docker run -d -p 80:80 nginx`
 4. i then copied over my index.html that was saved locally into my container - html folder `docker cp index.html 2359977b50d1:/usr/share/nginx/html/`
 5. i ran my site and when i saw everything working i commited to docker hub `docker commit <container id> mosman7/eng130-website-profile:tagname`
 6. Now we need to login to docker again `docker login`
 7. Then we push to docker hub `docker push mosman7/eng130-website-profile:tagname`
 8. to run website run `docker run -d -p 80:80  mosman7/eng130-website-profile:tagname`
+
+### How to Automate creating a container
+1. We need to create a `Dockerfile`
+2. In this file we must:
+    - define what image we are pulling
+    - Copy the index file from localhost to location inside docker container
+    - Define the port number we will be using
+    - Launch the server with commands 
+3. Build the image `docker build -t mosman7/name .`
+    - here we name the image and specify the location of Dockerfile, . means in current location
+4. After build we can create the container `docker run -d -p 80:80 mosman7/name`
+
+### NODE app task
+1. Create new directory 
+2. Create Dockerfile
+```
+# docker pull node
+FROM node
+
+# copy folders
+COPY app /home/
+COPY environment /home/
+
+# define the ports
+EXPOSE 80
+EXPOSE 3000
+
+# Install npm
+RUN apt-get update
+RUN apt-get install -y
+RUN apt-get install software-properties-common -y
+RUN apt-get install npm -y
+
+CMD ["nginx", "-g", "daemon off;"]
+# cd into app folder to run npm
+WORKDIR /home/app
+RUN npm install
+CMD ["npm", "start"]
+```
+3. Build the image `docker build -t mosman7/docker-app .`
+4. Run the container `docker run -d -p 80:3000 mosman7/docker-app` 
+    - If nginx is running on port 80 delete it or reverse proxy will not work
+5. Go to localhost on machine and Node app should be running
