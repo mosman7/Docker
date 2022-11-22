@@ -23,6 +23,18 @@ Docker is a software platform that allows you to build, test, and deploy applica
 ### How Docker works
 When you try to run a container, Docker will first try to check your local machine for the image. If it is not there, it will fetch the appropriate image from the registry (docker hub) using an API.
 
+### Docker lifecycle
+Docker containers have the following lifecycle:
+- Create a container
+- Run the container
+- Pause the container(optional)
+- Un-pause the container(optional)
+- Start the container
+- Stop the container
+- Restart the container
+- Kill the container
+- Destroy the container
+
 ### Docker commands
 - Windows users should use `alias docker="winpty docker"` for the below commands to work.
 - `docker run hello-world`: This first looks locally. Then it looks on the registry (on docker hub). It then displays the message if it finds it. The command is case sensitive.
