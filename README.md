@@ -31,9 +31,9 @@ When you try to run a container, Docker will first try to check your local machi
 - `docker rm (id)`: Removes a container.
 - `docker ps -a`: Lists all the running containers.
 - 
-- docker exec -it idhereok bash: The exec command is used to interact with already running containers on the Docker host. It allows you to start a session within the default directory of the container.
-- docker stop containeridhere: Stops a running container(it does save changes).
-- docker rm containeridhere -f: Completely removes a container.
+- `docker exec -it (id) bash`: The exec command is used to interact with already running containers on the Docker host. It allows you to start a session within the default directory of the container.
+- `docker stop (id)`: Stops a running container(it does save changes).
+- `docker rm (id) -f`: Completely removes a container.
 
 ## Create website task
 1. In vscode create a file `index.html`
