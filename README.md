@@ -92,9 +92,87 @@ CMD ["nginx", "-g", "daemon off;"]
 # cd into app folder to run npm
 WORKDIR /home/app
 RUN npm install
-CMD ["npm", "start"]
+CMD ["npm", "start"] # CMD is the last command run
 ```
 3. Build the image `docker build -t mosman7/docker-app .`
 4. Run the container `docker run -d -p 80:3000 mosman7/docker-app` 
     - If nginx is running on port 80 delete it or reverse proxy will not work
 5. Go to localhost on machine and Node app should be running
+
+
+## Using Docker compose to combine 2 containers together
+### Docker Compose
+Docker Compose is a tool that was developed to help define and share multi-container applications. With Compose, we can create a YAML file to define the services and with a single command, can spin everything up or shut it all down.
+
+A big advantage of using Compose is you can define your application in a file, keep it at the root of your project repo, and easily enable someone else to contribute to your project.
+
+#### Steps
+1. Create new directory and copy app folder
+2. Create a DB folder
+3. Create a dockerfile in both of these folders
+4. My app Dockerfile looked like this:
+```
+# give node app an alias
+FROM node as app
+#create app folder
+WORKDIR /usr/src/app
+#copy dependencies - all .json files to default location - app folder made
+COPY package*.json ./
+#run this npm version globally
+RUN npm install -g npm@7.20.6
+#copy everything from this location to app folder
+COPY . .
+#expose port 3000
+EXPOSE 3000
+#launch the app
+CMD ["node", "app.js"]
+# 1st build complete
+
+# multi stage build
+# slimmer version of node -alpine
+FROM node:alpine
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install -g npm@7.20.6
+COPY --from=app /usr/src/app /usr/src/app
+EXPOSE 3000
+RUN node seeds/seed.js
+CMD ["node", "app.js"]
+```
+5. Create a mongo.conf file in db allowing port 27017
+6. In DB Dockerfile copy mongo.conf into container and expose port 27017
+```
+FROM mongo
+WORKDIR /usr/src/db/
+COPY ./mongod.conf /etc/
+EXPOSE 27017
+CMD ["mongod"]
+```
+7. Now both dockerfiles are complete, create a docker compose.yml file
+8. In compose file, call both Dockerfiles 
+```
+# Version of the compose file format 
+version: "3.9"
+# Container services
+services:
+  db:
+  #  # image to fetch from docker hub
+    image: mongo
+    # Mapping of container port to host
+    ports:
+      - "27017:27017"
+
+  app:
+  # Path to Dockerfile 
+    build: ./app
+    restart: always
+    ports:
+      - "3000:3000"
+    # Environment variables for startup script
+    # container will use these variables to start the container with these define variables. 
+    environment:
+      - DB_HOST=mongodb://db:27017/posts
+    depends_on:
+      - db
+```
+9. Run `docker compose up` which will build the container using the 2 images
